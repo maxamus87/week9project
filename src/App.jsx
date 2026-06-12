@@ -1,122 +1,131 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+﻿import { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import OpportunityList from "./components/OpportunityList";
+import AddOpportunityForm from "./components/AddOpportunityForm";
+import MyOpportunities from "./components/MyOpportunities";
+import StatCard from "./components/StatCard";
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+import {
+  normalizeApiOpportunity,
+  getTotalCount,
+  getRemoteCount,
+  filterOpportunities,
+  loadMyOpportunities,
+  saveMyOpportunities,
+} from "./lib/opportunityUtils";
 
-      <div className="ticks"></div>
+const API_URL = "https://www.volunteerconnector.org/api/search/";
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+// Light border framing each major section, with space between frames
+function SectionFrame({ children }) {
+  return <div className="mb-5 p-4" style={{ border: "1px solid var(--surface)" }}>{children}</div>;
 }
 
-export default App
+export default function App() {
+  // API opportunities (read-only) and user-created opportunities (CRUD)
+  const [apiOpportunities, setApiOpportunities] = useState([]);
+  const [myOpportunities, setMyOpportunities] = useState(loadMyOpportunities);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Fetch opportunities from the API once on page load
+  useEffect(() => {
+    async function fetchOpportunities() {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        setApiOpportunities(data.results.map(normalizeApiOpportunity));
+      } catch {
+        setError("Unable to load volunteer opportunities");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchOpportunities();
+  }, []);
+
+  // Save user-created opportunities to localStorage whenever they change
+  useEffect(() => {
+    saveMyOpportunities(myOpportunities);
+  }, [myOpportunities]);
+
+  function handleAdd(newOpportunity) {
+    setMyOpportunities([newOpportunity, ...myOpportunities]);
+  }
+
+  function handleDelete(id) {
+    setMyOpportunities(myOpportunities.filter((opp) => opp.id !== id));
+  }
+
+  const allOpportunities = [...myOpportunities, ...apiOpportunities];
+  const visibleApi = filterOpportunities(apiOpportunities, searchTerm);
+  const visibleMine = filterOpportunities(myOpportunities, searchTerm);
+
+  return (
+    <div style={{ backgroundColor: "var(--page-bg)", minHeight: "100vh", fontFamily: "Times New Roman, Times, serif" }}>
+      <Header />
+
+      <main className="container py-4 mt-4 px-5 pb-5">
+
+        {/* Stats from lib/ business logic */}
+        <SectionFrame>
+          <div className="row g-3">
+            <div className="col-sm-4">
+              <StatCard label="Total Opportunities" value={getTotalCount(allOpportunities)} />
+            </div>
+            <div className="col-sm-4">
+              <StatCard label="Remote / Online" value={getRemoteCount(allOpportunities)} />
+            </div>
+            <div className="col-sm-4">
+              <StatCard label="Created By Me" value={getTotalCount(myOpportunities)} />
+            </div>
+          </div>
+        </SectionFrame>
+
+        {/* Search */}
+        <SectionFrame>
+          <input
+            type="search"
+            className="form-control form-control-lg"
+            style={{ backgroundColor: "var(--surface)", border: "1px solid var(--surface)", color: "var(--ink)", borderRadius: 0, fontFamily: "inherit" }}
+            placeholder="Search by title, organization, or category…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </SectionFrame>
+
+        <SectionFrame>
+          <AddOpportunityForm onAdd={handleAdd} />
+        </SectionFrame>
+
+        <SectionFrame>
+          <MyOpportunities opportunities={visibleMine} onDelete={handleDelete} />
+        </SectionFrame>
+
+        {/* API opportunities with loading / error states */}
+        <SectionFrame>
+          {isLoading ? (
+            <p className="mb-0" style={{ color: "var(--surface)" }}>Loading Opportunities…</p>
+          ) : error ? (
+            <p className="mb-0" style={{ color: "var(--danger)" }}>{error}</p>
+          ) : (
+            <OpportunityList
+              title="Volunteer Opportunities"
+              opportunities={visibleApi}
+              emptyMessage="No opportunities match your search."
+            />
+          )}
+        </SectionFrame>
+
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

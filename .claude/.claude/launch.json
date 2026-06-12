@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "week9project",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "C:\\Users\\maxam\\week9project", "--", "--port", "5199", "--strictPort"],
+      "port": 5199,
+      "autoPort": false
+    }
+  ]
+}

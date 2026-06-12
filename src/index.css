@@ -1,111 +1,79 @@
+/* Design palette — tweak the whole theme from here */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+  --page-bg: #000;       /* page background behind everything */
+  --surface: #ccc;       /* light panels: header, footer, cards, inputs; light text on dark */
+  --ink: #000;           /* text and borders on light surfaces */
+  --ink-muted: #555;     /* secondary text on light surfaces */
+  --input-border: #999;  /* form input outlines */
+  --danger: #ef4444;     /* delete button, error text */
 }
 
 body {
   margin: 0;
+  font-family: 'Times New Roman', Times, serif;
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* Stat card labels: shrink on mid-size screens so they don't wrap,
+   back to full size once the cards stack into a column (below 576px) */
+.stat-label {
+  font-size: 0.75rem;
 }
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+@media (min-width: 576px) and (max-width: 991px) {
+  .stat-label {
+    font-size: 0.58rem;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+/* Sharp corners everywhere — overrides Bootstrap's rounded cards/badges */
+.card,
+.card-body,
+.badge,
+.btn,
+.form-control {
+  border-radius: 0 !important;
+}
+
+/* Outline buttons (Add Opportunity, Delete): ink outline on the light card,
+   inverts on hover. Scoped as .btn.x to out-rank Bootstrap's .btn:hover, which loads later */
+.btn.add-btn,
+.btn.delete-btn {
+  background-color: transparent;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.btn.add-btn:hover,
+.btn.delete-btn:hover {
+  background-color: var(--ink);
+  color: var(--surface);
+}
+
+/* Phone sizes: trim the heavy page/frame padding so inputs get more width,
+   and bump input text to at least 16px (also stops iOS auto-zoom on focus) */
+@media (max-width: 575.98px) {
+  main.container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  main > div.p-4,
+  .card.p-4 {
+    padding: 1rem !important;
+  }
+  .form-control {
+    font-size: 1.05rem;
+    padding: 0.65rem 0.75rem;
   }
 }
-p {
-  margin: 0;
-}
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* Dark inputs: keep placeholder readable and stop Bootstrap's white
+   focus background from overriding the black input background */
+.form-control::placeholder {
+  color: #666;
 }
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+.form-control:focus {
+  background-color: var(--surface);
+  color: var(--ink);
+  border-color: var(--input-border) !important;
+  box-shadow: none !important;
+  outline: none !important;
 }

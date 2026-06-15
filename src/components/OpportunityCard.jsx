@@ -5,10 +5,10 @@ import { truncate } from "../lib/opportunityUtils";
 export default function OpportunityCard({ opportunity, onDelete }) {
   return (
     <div className="card h-100 p-4" style={{ backgroundColor: "var(--surface)", border: "1px solid var(--surface)" }}>
-      <div className="d-flex justify-content-between align-items-start gap-2">
+      <div className="d-flex flex-wrap justify-content-between align-items-start gap-2">
         <span
           className="badge"
-          style={{ backgroundColor: "transparent", color: "var(--ink)", border: "1px solid var(--ink)" }}
+          style={{ backgroundColor: "transparent", color: "var(--ink)", border: "1px solid var(--ink)", maxWidth: "100%", wordBreak: "break-word", whiteSpace: "normal" }}
         >
           {opportunity.category}
         </span>

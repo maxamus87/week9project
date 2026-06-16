@@ -73,6 +73,20 @@ export default function App() {
 
       <main className="container py-4 mt-4 px-5 pb-5">
 
+        
+
+        {/* Search */}
+        <SectionFrame>
+          <input
+            type="search"
+            className="form-control form-control-lg"
+            style={{ backgroundColor: "var(--surface)", border: "1px solid var(--surface)", color: "var(--ink)", borderRadius: 0, fontFamily: "inherit" }}
+            placeholder="Search by title, organization, or category…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </SectionFrame>
+
         {/* Stats from lib/ business logic */}
         <SectionFrame>
           <div className="row g-3">
@@ -88,25 +102,17 @@ export default function App() {
           </div>
         </SectionFrame>
 
-        {/* Search */}
-        <SectionFrame>
-          <input
-            type="search"
-            className="form-control form-control-lg"
-            style={{ backgroundColor: "var(--surface)", border: "1px solid var(--surface)", color: "var(--ink)", borderRadius: 0, fontFamily: "inherit" }}
-            placeholder="Search by title, organization, or category…"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </SectionFrame>
-
         <SectionFrame>
           <AddOpportunityForm onAdd={handleAdd} />
         </SectionFrame>
 
+        
+
         <SectionFrame>
           <MyOpportunities opportunities={visibleMine} onDelete={handleDelete} />
         </SectionFrame>
+
+        
 
         {/* API opportunities with loading / error states */}
         <SectionFrame>
@@ -122,6 +128,8 @@ export default function App() {
             />
           )}
         </SectionFrame>
+
+        
 
       </main>
 

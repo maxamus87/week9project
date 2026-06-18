@@ -21,7 +21,7 @@ const API_URL = "https://www.volunteerconnector.org/api/search/";
 
 // Light border framing each major section, with space between frames
 function SectionFrame({ children }) {
-  return <div className="mb-5 p-4" style={{ border: "1px solid var(--surface)" }}>{children}</div>;
+  return <div className="section-frame mb-5 p-4 pb-5">{children}</div>;
 }
 
 export default function App() {
@@ -68,10 +68,10 @@ export default function App() {
   const visibleMine = filterOpportunities(myOpportunities, searchTerm);
 
   return (
-    <div style={{ backgroundColor: "var(--page-bg)", minHeight: "100vh", fontFamily: "Times New Roman, Times, serif" }}>
+    <div style={{ backgroundColor: "var(--page-bg)", minHeight: "100vh" }}>
       <Header />
 
-      <main className="container py-4 mt-4 px-5 pb-5">
+      <main className="container py-4 mt-4 pb-5 px-5" style={{ paddingLeft: "5rem", paddingRight: "5rem" }}>
 
         
 
@@ -80,7 +80,7 @@ export default function App() {
           <input
             type="search"
             className="form-control form-control-lg"
-            style={{ backgroundColor: "var(--surface)", border: "1px solid var(--surface)", color: "var(--ink)", borderRadius: 0, fontFamily: "inherit" }}
+            style={{ border: "none", borderBottom: "1px solid var(--input-border)", borderRadius: 0, fontFamily: "inherit" }}
             placeholder="Search by title, organization, or category…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -89,7 +89,7 @@ export default function App() {
 
         {/* Stats from lib/ business logic */}
         <SectionFrame>
-          <div className="row g-3">
+          <div className="row g-5">
             <div className="col-sm-4">
               <StatCard label="Total Opportunities" value={getTotalCount(allOpportunities)} />
             </div>
@@ -101,18 +101,6 @@ export default function App() {
             </div>
           </div>
         </SectionFrame>
-
-        <SectionFrame>
-          <AddOpportunityForm onAdd={handleAdd} />
-        </SectionFrame>
-
-        
-
-        <SectionFrame>
-          <MyOpportunities opportunities={visibleMine} onDelete={handleDelete} />
-        </SectionFrame>
-
-        
 
         {/* API opportunities with loading / error states */}
         <SectionFrame>
@@ -127,6 +115,14 @@ export default function App() {
               emptyMessage="No opportunities match your search."
             />
           )}
+        </SectionFrame>
+
+        <SectionFrame>
+          <AddOpportunityForm onAdd={handleAdd} />
+        </SectionFrame>
+
+        <SectionFrame>
+          <MyOpportunities opportunities={visibleMine} onDelete={handleDelete} />
         </SectionFrame>
 
         

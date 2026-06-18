@@ -12,10 +12,18 @@ const emptyForm = {
 // Controlled form for creating a new opportunity
 export default function AddOpportunityForm({ onAdd }) {
   const [form, setForm] = useState(emptyForm);
+  const [collapsed, setCollapsed] = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
+  }
+
+  function handleDateChange(e) {
+    let digits = e.target.value.replace(/\D/g, "");
+    if (digits.length > 2) digits = digits.slice(0, 2) + "/" + digits.slice(2);
+    if (digits.length > 5) digits = digits.slice(0, 5) + "/" + digits.slice(5);
+    setForm({ ...form, date: digits.slice(0, 10) });
   }
 
   function handleSubmit(e) {
@@ -36,21 +44,22 @@ export default function AddOpportunityForm({ onAdd }) {
     setForm(emptyForm); // clear the form after submitting
   }
 
-  const inputStyle = { backgroundColor: "var(--surface)", border: "1px solid var(--input-border)", color: "var(--ink)", borderRadius: 0 };
+  const inputStyle = { border: "none", borderBottom: "1px solid var(--input-border)", borderRadius: 0 };
 
   return (
     <section>
       <h6
-        className="mb-3"
-        style={{ color: "var(--surface)", textTransform: "uppercase", letterSpacing: ".06em" }}
+        className={collapsed ? "mb-1" : "mb-3"}
+        onClick={() => setCollapsed(!collapsed)}
+        style={{ color: "var(--surface)", textTransform: "uppercase", letterSpacing: ".2em", cursor: "pointer", userSelect: "none" }}
       >
-        Add an Opportunity
+        Add an Opportunity <span style={{ fontSize: "0.7em", opacity: 0.6 }}>{collapsed ? "▸" : "▾"}</span>
       </h6>
 
-      <form
+      {!collapsed && <form
         onSubmit={handleSubmit}
-        className="card p-4"
-        style={{ backgroundColor: "var(--surface)", border: "1px solid var(--surface)" }}
+        className="card dark-card p-5"
+        style={{ backgroundColor: "var(--surface)", borderTop: "none", borderLeft: "none", borderBottom: "1px solid var(--input-border)", borderRight: "1px solid var(--input-border)" }}
       >
         <div className="row g-3">
           <div className="col-md-6">
@@ -84,8 +93,9 @@ export default function AddOpportunityForm({ onAdd }) {
           <div className="col-md-4">
             <label className="form-label" style={{ color: "var(--ink)" }}>Date</label>
             <input
-              type="date" className="form-control" style={inputStyle}
-              name="date" value={form.date} onChange={handleChange} required
+              type="text" className="form-control" style={inputStyle}
+              placeholder="MM/DD/YYYY"
+              name="date" value={form.date} onChange={handleDateChange} required
             />
           </div>
           <div className="col-md-4">
@@ -97,12 +107,12 @@ export default function AddOpportunityForm({ onAdd }) {
           </div>
         </div>
 
-        <div className="mt-3">
+        <div className="mt-5">
           <button type="submit" className="btn add-btn">
             Add Opportunity
           </button>
         </div>
-      </form>
+      </form>}
     </section>
   );
 }

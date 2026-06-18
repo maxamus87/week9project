@@ -1,16 +1,32 @@
 /* Design palette — tweak the whole theme from here */
 :root {
   --page-bg: #000;       /* page background behind everything */
-  --surface: #ccc;       /* light panels: header, footer, cards, inputs; light text on dark */
+  --surface: #a0a0a0;    /* light panels: header, footer, cards, inputs; light text on dark */
   --ink: #000;           /* text and borders on light surfaces */
-  --ink-muted: #555;     /* secondary text on light surfaces */
-  --input-border: #999;  /* form input outlines */
+  --ink-muted: #777;     /* secondary text on light surfaces */
+  --input-border: #666;  /* form input outlines */
   --danger: #ef4444;     /* delete button, error text */
 }
 
 body {
   margin: 0;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 300;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(ellipse 85% 65% at 95% 100%, rgba(255,255,255,0.04) 0%, transparent 100%);
+}
+
+body * {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 300;
 }
 
 /* Stat card labels: shrink on mid-size screens so they don't wrap,
@@ -24,13 +40,40 @@ body {
   }
 }
 
-/* Sharp corners everywhere — overrides Bootstrap's rounded cards/badges */
+/* Pill shapes everywhere */
 .card,
-.card-body,
+.card-body {
+  border-radius: 0.5rem !important;
+}
+
 .badge,
 .btn,
 .form-control {
-  border-radius: 0 !important;
+  border-radius: 0.3rem !important;
+}
+
+.badge {
+  font-size: 0.6rem !important;
+  margin-right: 0.4rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card:not(.dark-card) {
+  border-color: var(--input-border) !important;
+  border-top: none !important;
+  border-left: none !important;
+}
+
+.badge {
+  border-top: none !important;
+  border-left: none !important;
+}
+
+.btn.add-btn,
+.btn.delete-btn {
+  border-top: none !important;
+  border-left: none !important;
 }
 
 /* Outline buttons (Add Opportunity, Delete): ink outline on the light card,
@@ -40,7 +83,9 @@ body {
   background-color: transparent;
   border: 1px solid var(--ink);
   color: var(--ink);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  letter-spacing: 0.06em;
+  font-weight: 300;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 .btn.add-btn:hover,
 .btn.delete-btn:hover {
@@ -60,20 +105,93 @@ body {
     padding: 1rem !important;
   }
   .form-control {
+    background-color: var(--surface);
     font-size: 1.05rem;
     padding: 0.65rem 0.75rem;
   }
 }
 
-/* Dark inputs: keep placeholder readable and stop Bootstrap's white
-   focus background from overriding the black input background */
+.form-control {
+  background-color: var(--ink) !important;
+  color: var(--surface) !important;
+  font-weight: 300 !important;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+.form-control:hover {
+  background-color: var(--surface) !important;
+  color: var(--ink) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.08);
+}
 .form-control::placeholder {
   color: #666;
 }
 .form-control:focus {
-  background-color: var(--surface);
-  color: var(--ink);
+  background-color: var(--surface) !important;
+  color: var(--ink) !important;
   border-color: var(--input-border) !important;
   box-shadow: none !important;
   outline: none !important;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300 !important;
+}
+
+
+.section-frame {
+  border: none;
+}
+
+/* Dark card: dark bg, muted light text — no hover flip */
+.dark-card {
+  --surface: #000;
+  --ink: #a0a0a0;
+  --ink-muted: #777;
+}
+.dark-card .form-control {
+  background-color: #000 !important;
+  color: #a0a0a0 !important;
+}
+.dark-card .form-control:hover,
+.dark-card .form-control:focus {
+  background-color: #a0a0a0 !important;
+  color: #000 !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Opportunity cards: dark by default, flip to light on hover */
+.opportunity-card {
+  --surface: #000;
+  --ink: #a0a0a0;
+  --ink-muted: #a0a0a0;
+  animation: fadeInUp 0.5s ease both;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+
+.opportunity-card:nth-child(1) { animation-delay: 0.0s; }
+.opportunity-card:nth-child(2) { animation-delay: 0.1s; }
+.opportunity-card:nth-child(3) { animation-delay: 0.2s; }
+.opportunity-card:nth-child(4) { animation-delay: 0.3s; }
+.opportunity-card:nth-child(5) { animation-delay: 0.4s; }
+.opportunity-card:nth-child(6) { animation-delay: 0.5s; }
+
+.opportunity-card:hover {
+  --surface: #a0a0a0;
+  --ink: #000;
+  --ink-muted: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.05);
+}
+

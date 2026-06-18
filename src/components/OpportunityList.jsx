@@ -3,7 +3,7 @@ import OpportunityCard from "./OpportunityCard";
 
 // Grid of opportunity cards with a section heading
 export default function OpportunityList({ title, opportunities, onDelete, emptyMessage }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
     <section>

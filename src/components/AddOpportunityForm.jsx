@@ -12,7 +12,7 @@ const emptyForm = {
 // Controlled form for creating a new opportunity
 export default function AddOpportunityForm({ onAdd }) {
   const [form, setForm] = useState(emptyForm);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   function handleChange(e) {
     const { name, value } = e.target;
